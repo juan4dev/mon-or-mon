@@ -59,9 +59,9 @@
       </button>
     </div>
 
-    @if (selectedUniverse(); as answer) {
-      @if (creature) {
-        <div class="game__feedback" aria-live="polite">
+    <div class="game__feedback" aria-live="polite">
+      @if (selectedUniverse(); as answer) {
+        @if (creature) {
           <p class="game__result">
             <strong>{{ answer === creature.universe ? 'Correct!' : 'Incorrect.' }}</strong>
             This creature is <span class="game__creature-name">{{ creature.name }}</span
@@ -72,8 +72,10 @@
           } @else {
             <button type="button" (click)="restartGame()">Restart game</button>
           }
-        </div>
+        }
+      } @else {
+        <p class="game__prompt">Who’s this creature?</p>
       }
-    }
+    </div>
   </section>
 </main>

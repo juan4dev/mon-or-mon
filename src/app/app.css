@@ -167,11 +167,23 @@ button:focus-visible {
 
 .game__result {
   color: #273750;
+  animation: feedback-reveal 180ms ease-out;
 }
 
 .game__feedback {
   display: grid;
+  grid-template-rows: 4.5rem 3rem;
   gap: 1rem;
+}
+
+.game__prompt,
+.game__result {
+  align-self: center;
+}
+
+.game__prompt {
+  color: #526078;
+  font-weight: 600;
 }
 
 .game__creature-name {
@@ -225,6 +237,16 @@ button:focus-visible {
   }
 }
 
+@keyframes feedback-reveal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 24rem) {
   .game__choices {
     grid-template-columns: 1fr;
@@ -233,7 +255,8 @@ button:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .creature-card--correct,
-  .creature-card--correct::after {
+  .creature-card--correct::after,
+  .game__result {
     animation: none;
   }
 

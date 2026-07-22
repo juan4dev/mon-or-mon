@@ -1,6 +1,9 @@
 <main class="game-page">
   <section class="game" aria-labelledby="game-title">
-    @let creature = creature$ | async;
+    @let creatureState = creatureState$ | async;
+    @let creature = creatureState?.creature;
+    @let creatureUnavailable = creatureState?.status === 'error' || imageFailed();
+    @let creatureLoading = creatureState?.status !== 'ready' || !imageReady();
 
     <header class="game__header">
       <h1 id="game-title">Mon or Mon</h1>
@@ -28,6 +31,7 @@
 
     <div
       class="creature-card"
+      [attr.aria-busy]="!creatureUnavailable && creatureLoading"
       [class.creature-card--correct]="
         selectedUniverse() !== null && selectedUniverse() === creature?.universe
       "
@@ -35,23 +39,36 @@
         selectedUniverse() !== null && selectedUniverse() !== creature?.universe
       "
     >
-      @if (creature) {
+      @if (creature && !imageFailed()) {
         <img
           class="creature-card__image"
+          [class.creature-card__image--loading]="!imageReady()"
           [src]="creature.imageUrl"
           alt="Mystery creature"
           width="475"
           height="475"
+          (load)="handleImageLoad()"
+          (error)="handleImageError()"
         />
       } @else {
-        <div class="creature-card__image" aria-hidden="true"></div>
+        <div
+          class="creature-card__image creature-card__status"
+          [class.creature-card__status--error]="creatureUnavailable"
+          aria-hidden="true"
+        >
+          @if (creatureUnavailable) {
+            <span class="creature-card__status-symbol">!</span>
+          } @else {
+            <span>Loading...</span>
+          }
+        </div>
       }
     </div>
 
     <div class="game__choices" aria-label="Creature type choices">
       <button
         type="button"
-        [disabled]="!creature || selectedUniverse() !== null"
+        [disabled]="!creature || !imageReady() || selectedUniverse() !== null"
         [class.game__choice--correct]="
           selectedUniverse() !== null && creature?.universe === 'pokemon'
         "
@@ -64,7 +81,7 @@
       </button>
       <button
         type="button"
-        [disabled]="!creature || selectedUniverse() !== null"
+        [disabled]="!creature || !imageReady() || selectedUniverse() !== null"
         [class.game__choice--correct]="
           selectedUniverse() !== null && creature?.universe === 'digimon'
         "
@@ -78,7 +95,14 @@
     </div>
 
     <div class="game__feedback" aria-live="polite">
-      @if (selectedUniverse(); as answer) {
+      @if (creatureUnavailable) {
+        <p class="game__error" role="alert">
+          <strong>Couldn’t load a creature.</strong> Check your connection and try again.
+        </p>
+        <button type="button" (click)="retryCreature()">Try again</button>
+      } @else if (creatureLoading) {
+        <p class="game__prompt">Loading creature...</p>
+      } @else if (selectedUniverse(); as answer) {
         @if (creature) {
           <p class="game__result">
             <strong>{{ answer === creature.universe ? 'Correct!' : 'Incorrect.' }}</strong>

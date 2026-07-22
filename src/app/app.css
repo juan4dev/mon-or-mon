@@ -181,6 +181,29 @@ h1 {
   object-fit: contain;
 }
 
+.creature-card__image--loading {
+  opacity: 0.35;
+}
+
+.creature-card__status {
+  display: grid;
+  color: var(--retro-muted);
+  font-weight: 700;
+  place-items: center;
+  text-transform: uppercase;
+  animation: retro-loading 900ms steps(2, end) infinite;
+}
+
+.creature-card__status--error {
+  color: #8e2929;
+  background: #efd3c8;
+  animation: none;
+}
+
+.creature-card__status-symbol {
+  font-size: 3rem;
+}
+
 .game__choices {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -247,6 +270,11 @@ button:focus-visible {
 .game__result {
   color: var(--retro-ink);
   animation: feedback-reveal 180ms ease-out;
+}
+
+.game__error {
+  align-self: center;
+  color: #8e2929;
 }
 
 .game__feedback {
@@ -379,6 +407,12 @@ button:focus-visible {
   }
 }
 
+@keyframes retro-loading {
+  50% {
+    background: #d7dac2;
+  }
+}
+
 @media (max-width: 24rem) {
   .game__choices {
     grid-template-columns: 1fr;
@@ -392,7 +426,8 @@ button:focus-visible {
   .creature-card--incorrect::after,
   .game__result,
   .game__streak--lost,
-  .game__streak-value {
+  .game__streak-value,
+  .creature-card__status {
     animation: none;
   }
 

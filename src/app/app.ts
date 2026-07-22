@@ -18,6 +18,7 @@ export class App {
 
   protected readonly selectedUniverse = signal<CreatureUniverse | null>(null);
   protected readonly streak = signal(0);
+  protected readonly lostStreak = signal(0);
   protected readonly streakHue = computed(() => {
     const progress = Math.min(this.streak() / 50, 1);
 
@@ -28,7 +29,13 @@ export class App {
   protected answer(selectedUniverse: CreatureUniverse, correctUniverse: CreatureUniverse): void {
     if (this.selectedUniverse() === null) {
       this.selectedUniverse.set(selectedUniverse);
-      this.streak.update((streak) => (selectedUniverse === correctUniverse ? streak + 1 : 0));
+
+      if (selectedUniverse === correctUniverse) {
+        this.streak.update((streak) => streak + 1);
+      } else {
+        this.lostStreak.set(this.streak());
+        this.streak.set(0);
+      }
     }
   }
 
@@ -43,6 +50,7 @@ export class App {
 
   private startRound(): void {
     this.selectedUniverse.set(null);
+    this.lostStreak.set(0);
     this.creature$ = this.getRandomCreature();
   }
 

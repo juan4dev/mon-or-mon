@@ -86,6 +86,14 @@ h1 {
     0 0 0.75rem var(--streak-mid);
 }
 
+.game__streak--lost {
+  --streak-dark: #702424;
+  --streak-mid: #b33a3a;
+  --streak-light: #f2a0a0;
+
+  animation: retro-streak-lost 600ms steps(4, end);
+}
+
 .game__streak-value {
   display: grid;
   min-width: 2rem;
@@ -121,10 +129,25 @@ h1 {
   animation: retro-success-impact 700ms steps(4, end);
 }
 
-.creature-card--correct::after {
+.creature-card--incorrect {
+  border-color: #8e2929;
+  box-shadow:
+    6px 6px 0 #b33a3a,
+    0 0 0 3px #b33a3a;
+  animation: retro-error-impact 600ms steps(5, end);
+}
+
+.creature-card--correct::after,
+.creature-card--incorrect::after {
   position: absolute;
   z-index: 2;
   inset: 0.75rem;
+  content: '';
+  pointer-events: none;
+  animation: retro-screen-flash 700ms steps(4, end) forwards;
+}
+
+.creature-card--correct::after {
   background:
     repeating-linear-gradient(
       0deg,
@@ -134,9 +157,18 @@ h1 {
       transparent 7px
     ),
     rgb(155 188 15 / 45%);
-  content: '';
-  pointer-events: none;
-  animation: retro-screen-flash 700ms steps(4, end) forwards;
+}
+
+.creature-card--incorrect::after {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(92 15 15 / 30%) 0,
+      rgb(92 15 15 / 30%) 4px,
+      transparent 4px,
+      transparent 8px
+    ),
+    rgb(179 58 58 / 40%);
 }
 
 .creature-card__image {
@@ -238,6 +270,13 @@ button:focus-visible {
   text-transform: capitalize;
 }
 
+.game__streak-lost {
+  display: block;
+  margin-top: 0.25rem;
+  color: #8e2929;
+  font-weight: 700;
+}
+
 @keyframes retro-success-impact {
   0%,
   100% {
@@ -284,6 +323,38 @@ button:focus-visible {
   }
 }
 
+@keyframes retro-error-impact {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+
+  20%,
+  60% {
+    transform: translate(-5px, 1px);
+  }
+
+  40%,
+  80% {
+    transform: translate(5px, -1px);
+  }
+}
+
+@keyframes retro-streak-lost {
+  0%,
+  100% {
+    transform: translate(0) scale(1);
+  }
+
+  35% {
+    transform: translateX(-4px) scale(1.08);
+  }
+
+  70% {
+    transform: translateX(4px) scale(0.9);
+  }
+}
+
 @keyframes feedback-reveal {
   from {
     opacity: 0;
@@ -316,13 +387,17 @@ button:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .creature-card--correct,
+  .creature-card--incorrect,
   .creature-card--correct::after,
+  .creature-card--incorrect::after,
   .game__result,
+  .game__streak--lost,
   .game__streak-value {
     animation: none;
   }
 
-  .creature-card--correct::after {
+  .creature-card--correct::after,
+  .creature-card--incorrect::after {
     opacity: 0;
   }
 }

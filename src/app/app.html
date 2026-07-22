@@ -9,6 +9,9 @@
         class="game__streak"
         [class.game__streak--active]="streak() > 0"
         [class.game__streak--maximum]="streak() >= 50"
+        [class.game__streak--lost]="
+          selectedUniverse() !== null && selectedUniverse() !== creature?.universe
+        "
         [style.--streak-hue]="streakHue()"
         aria-live="polite"
       >
@@ -27,6 +30,9 @@
       class="creature-card"
       [class.creature-card--correct]="
         selectedUniverse() !== null && selectedUniverse() === creature?.universe
+      "
+      [class.creature-card--incorrect]="
+        selectedUniverse() !== null && selectedUniverse() !== creature?.universe
       "
     >
       @if (creature) {
@@ -78,6 +84,9 @@
             <strong>{{ answer === creature.universe ? 'Correct!' : 'Incorrect.' }}</strong>
             This creature is <span class="game__creature-name">{{ creature.name }}</span
             >.
+            @if (lostStreak() > 0) {
+              <span class="game__streak-lost">Streak lost: {{ lostStreak() }}.</span>
+            }
           </p>
           @if (answer === creature.universe) {
             <button type="button" (click)="nextCreature()">Next creature</button>

@@ -80,6 +80,15 @@ button:hover {
   background: #172033;
 }
 
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background: #273750;
+}
+
 button:focus-visible {
   outline: 3px solid #7895c4;
   outline-offset: 2px;
@@ -87,6 +96,15 @@ button:focus-visible {
 
 .game__streak {
   font-weight: 700;
+}
+
+.game__result {
+  color: #273750;
+}
+
+.game__creature-name {
+  font-weight: 700;
+  text-transform: capitalize;
 }
 
 @media (max-width: 24rem) {

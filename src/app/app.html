@@ -1,12 +1,14 @@
 <main class="game-page">
   <section class="game" aria-labelledby="game-title">
+    @let creature = creature$ | async;
+
     <header class="game__header">
       <h1 id="game-title">Mon or Mon</h1>
       <p>Is it a Pokémon or a Digimon?</p>
     </header>
 
     <div class="creature-card">
-      @if (creature$ | async; as creature) {
+      @if (creature) {
         <img
           class="creature-card__image"
           [src]="creature.imageUrl"
@@ -20,9 +22,31 @@
     </div>
 
     <div class="game__choices" aria-label="Creature type choices">
-      <button type="button">Pokémon</button>
-      <button type="button">Digimon</button>
+      <button
+        type="button"
+        [disabled]="!creature || selectedUniverse() !== null"
+        (click)="answer('pokemon')"
+      >
+        Pokémon
+      </button>
+      <button
+        type="button"
+        [disabled]="!creature || selectedUniverse() !== null"
+        (click)="answer('digimon')"
+      >
+        Digimon
+      </button>
     </div>
+
+    @if (selectedUniverse(); as answer) {
+      @if (creature) {
+        <p class="game__result" aria-live="polite">
+          <strong>{{ answer === creature.universe ? 'Correct!' : 'Incorrect.' }}</strong>
+          This creature is <span class="game__creature-name">{{ creature.name }}</span
+          >.
+        </p>
+      }
+    }
 
     <p class="game__streak">Streak: 0</p>
   </section>

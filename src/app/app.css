@@ -34,17 +34,74 @@ h1 {
   line-height: 1.1;
 }
 
-.game__header p {
+.game__question {
   color: #526078;
   font-size: 1.125rem;
 }
 
+.game__streak {
+  display: inline-flex;
+  align-items: center;
+  justify-self: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem 0.375rem 0.75rem;
+  border: 1px solid #e4b95d;
+  border-radius: 999px;
+  color: #71480b;
+  background: #fff4d8;
+  box-shadow: 0 0.25rem 0.75rem rgb(113 72 11 / 12%);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.game__streak-value {
+  display: grid;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding-inline: 0.375rem;
+  border-radius: 999px;
+  color: #ffffff;
+  background: #c66a0a;
+  font-size: 1.125rem;
+  place-items: center;
+}
+
 .creature-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding: 1rem;
   border: 1px solid #d8dee9;
   border-radius: 1rem;
   background: #ffffff;
   box-shadow: 0 0.5rem 1.5rem rgb(23 32 51 / 8%);
+}
+
+.creature-card--correct {
+  border-color: #306230;
+  box-shadow:
+    0 0.5rem 1.5rem rgb(23 32 51 / 8%),
+    0 0 0 3px #8bac0f;
+  animation: retro-success-impact 700ms steps(4, end);
+}
+
+.creature-card--correct::after {
+  position: absolute;
+  z-index: 2;
+  inset: 1rem;
+  border-radius: 0.75rem;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(15 56 15 / 24%) 0,
+      rgb(15 56 15 / 24%) 3px,
+      transparent 3px,
+      transparent 7px
+    ),
+    rgb(155 188 15 / 45%);
+  content: '';
+  pointer-events: none;
+  animation: retro-screen-flash 700ms steps(4, end) forwards;
 }
 
 .creature-card__image {
@@ -108,10 +165,6 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-.game__streak {
-  font-weight: 700;
-}
-
 .game__result {
   color: #273750;
 }
@@ -126,8 +179,65 @@ button:focus-visible {
   text-transform: capitalize;
 }
 
+@keyframes retro-success-impact {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+
+  20% {
+    transform: translate(-3px, 2px);
+  }
+
+  40% {
+    transform: translate(3px, -2px);
+  }
+
+  60% {
+    transform: translate(-2px, -1px);
+  }
+
+  80% {
+    transform: translate(2px, 1px);
+  }
+}
+
+@keyframes retro-screen-flash {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.9;
+  }
+
+  40% {
+    opacity: 0.2;
+  }
+
+  60% {
+    opacity: 0.7;
+  }
+
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+
 @media (max-width: 24rem) {
   .game__choices {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .creature-card--correct,
+  .creature-card--correct::after {
+    animation: none;
+  }
+
+  .creature-card--correct::after {
+    opacity: 0;
   }
 }

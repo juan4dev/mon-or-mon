@@ -4,10 +4,19 @@
 
     <header class="game__header">
       <h1 id="game-title">Mon or Mon</h1>
-      <p>Is it a Pokémon or a Digimon?</p>
+      <p class="game__question">Is it a Pokémon or a Digimon?</p>
+      <p class="game__streak" aria-live="polite">
+        <span>Streak</span>
+        <strong class="game__streak-value">{{ streak() }}</strong>
+      </p>
     </header>
 
-    <div class="creature-card">
+    <div
+      class="creature-card"
+      [class.creature-card--correct]="
+        selectedUniverse() !== null && selectedUniverse() === creature?.universe
+      "
+    >
       @if (creature) {
         <img
           class="creature-card__image"
@@ -66,7 +75,5 @@
         </div>
       }
     }
-
-    <p class="game__streak" aria-live="polite">Streak: {{ streak() }}</p>
   </section>
 </main>

@@ -102,6 +102,11 @@ button:focus-visible {
   color: #273750;
 }
 
+.game__feedback {
+  display: grid;
+  gap: 1rem;
+}
+
 .game__creature-name {
   font-weight: 700;
   text-transform: capitalize;

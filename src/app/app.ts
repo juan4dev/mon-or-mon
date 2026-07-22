@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import type { Observable } from 'rxjs';
 
-import type { CreatureUniverse } from './creature.model';
+import type { Creature, CreatureUniverse } from './creature.model';
 import { DigimonService } from './digimon.service';
 import { PokemonService } from './pokemon.service';
 
@@ -16,14 +17,22 @@ export class App {
   private readonly pokemonService = inject(PokemonService);
 
   protected readonly selectedUniverse = signal<CreatureUniverse | null>(null);
-  protected readonly creature$ =
-    Math.random() < 0.5
-      ? this.pokemonService.getRandomPokemon()
-      : this.digimonService.getRandomDigimon();
+  protected creature$ = this.getRandomCreature();
 
   protected answer(universe: CreatureUniverse): void {
     if (this.selectedUniverse() === null) {
       this.selectedUniverse.set(universe);
     }
+  }
+
+  protected nextCreature(): void {
+    this.selectedUniverse.set(null);
+    this.creature$ = this.getRandomCreature();
+  }
+
+  private getRandomCreature(): Observable<Creature> {
+    return Math.random() < 0.5
+      ? this.pokemonService.getRandomPokemon()
+      : this.digimonService.getRandomDigimon();
   }
 }

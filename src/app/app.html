@@ -40,11 +40,14 @@
 
     @if (selectedUniverse(); as answer) {
       @if (creature) {
-        <p class="game__result" aria-live="polite">
-          <strong>{{ answer === creature.universe ? 'Correct!' : 'Incorrect.' }}</strong>
-          This creature is <span class="game__creature-name">{{ creature.name }}</span
-          >.
-        </p>
+        <div class="game__feedback" aria-live="polite">
+          <p class="game__result">
+            <strong>{{ answer === creature.universe ? 'Correct!' : 'Incorrect.' }}</strong>
+            This creature is <span class="game__creature-name">{{ creature.name }}</span
+            >.
+          </p>
+          <button type="button" (click)="nextCreature()">Next creature</button>
+        </div>
       }
     }
 

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import type { Observable } from 'rxjs';
 
 import type { Creature, CreatureUniverse } from './creature.model';
@@ -18,6 +18,11 @@ export class App {
 
   protected readonly selectedUniverse = signal<CreatureUniverse | null>(null);
   protected readonly streak = signal(0);
+  protected readonly streakHue = computed(() => {
+    const progress = Math.min(this.streak() / 50, 1);
+
+    return Math.round(120 * (1 - progress));
+  });
   protected creature$ = this.getRandomCreature();
 
   protected answer(selectedUniverse: CreatureUniverse, correctUniverse: CreatureUniverse): void {

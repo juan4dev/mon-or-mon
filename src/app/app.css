@@ -48,10 +48,14 @@ h1 {
 }
 
 .creature-card__image {
+  display: block;
+  width: 100%;
+  height: auto;
   aspect-ratio: 1;
   border: 2px dashed #b8c0ce;
   border-radius: 0.75rem;
   background: #eef1f5;
+  object-fit: contain;
 }
 
 .game__choices {

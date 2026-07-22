@@ -6,7 +6,17 @@
     </header>
 
     <div class="creature-card">
-      <div class="creature-card__image" role="img" aria-label="Creature image placeholder"></div>
+      @if (creature$ | async; as creature) {
+        <img
+          class="creature-card__image"
+          [src]="creature.imageUrl"
+          alt="Mystery creature"
+          width="475"
+          height="475"
+        />
+      } @else {
+        <div class="creature-card__image" aria-hidden="true"></div>
+      }
     </div>
 
     <div class="game__choices" aria-label="Creature type choices">

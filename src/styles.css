@@ -5,9 +5,10 @@
 }
 
 html {
-  font-family: system-ui, sans-serif;
+  font-family: 'Courier New', ui-monospace, monospace;
 }
 
 body {
   margin: 0;
+  background: #dedfca;
 }

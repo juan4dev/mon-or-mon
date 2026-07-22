@@ -17,11 +17,13 @@ export class App {
   private readonly pokemonService = inject(PokemonService);
 
   protected readonly selectedUniverse = signal<CreatureUniverse | null>(null);
+  protected readonly streak = signal(0);
   protected creature$ = this.getRandomCreature();
 
-  protected answer(universe: CreatureUniverse): void {
+  protected answer(selectedUniverse: CreatureUniverse, correctUniverse: CreatureUniverse): void {
     if (this.selectedUniverse() === null) {
-      this.selectedUniverse.set(universe);
+      this.selectedUniverse.set(selectedUniverse);
+      this.streak.update((streak) => (selectedUniverse === correctUniverse ? streak + 1 : 0));
     }
   }
 

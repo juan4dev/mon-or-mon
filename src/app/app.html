@@ -25,14 +25,14 @@
       <button
         type="button"
         [disabled]="!creature || selectedUniverse() !== null"
-        (click)="answer('pokemon')"
+        (click)="answer('pokemon', creature!.universe)"
       >
         Pokémon
       </button>
       <button
         type="button"
         [disabled]="!creature || selectedUniverse() !== null"
-        (click)="answer('digimon')"
+        (click)="answer('digimon', creature!.universe)"
       >
         Digimon
       </button>
@@ -51,6 +51,6 @@
       }
     }
 
-    <p class="game__streak">Streak: 0</p>
+    <p class="game__streak" aria-live="polite">Streak: {{ streak() }}</p>
   </section>
 </main>

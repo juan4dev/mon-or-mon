@@ -1,0 +1,8 @@
+- Communicate with the user in Spanish.
+- Keep all repository content in English.
+- Keep the project simple.
+- Implement only the scope requested in the current iteration.
+- Prefer modern Angular features when they simplify the code.
+- Do not add dependencies or abstractions without an explicit requirement.
+- Do not create commits or push changes.
+- Run a production build after implementation.

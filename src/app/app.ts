@@ -28,6 +28,15 @@ export class App {
   }
 
   protected nextCreature(): void {
+    this.startRound();
+  }
+
+  protected restartGame(): void {
+    this.streak.set(0);
+    this.startRound();
+  }
+
+  private startRound(): void {
     this.selectedUniverse.set(null);
     this.creature$ = this.getRandomCreature();
   }

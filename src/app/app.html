@@ -25,6 +25,12 @@
       <button
         type="button"
         [disabled]="!creature || selectedUniverse() !== null"
+        [class.game__choice--correct]="
+          selectedUniverse() !== null && creature?.universe === 'pokemon'
+        "
+        [class.game__choice--incorrect]="
+          selectedUniverse() === 'pokemon' && creature?.universe !== 'pokemon'
+        "
         (click)="answer('pokemon', creature!.universe)"
       >
         Pokémon
@@ -32,6 +38,12 @@
       <button
         type="button"
         [disabled]="!creature || selectedUniverse() !== null"
+        [class.game__choice--correct]="
+          selectedUniverse() !== null && creature?.universe === 'digimon'
+        "
+        [class.game__choice--incorrect]="
+          selectedUniverse() === 'digimon' && creature?.universe !== 'digimon'
+        "
         (click)="answer('digimon', creature!.universe)"
       >
         Digimon
@@ -46,7 +58,11 @@
             This creature is <span class="game__creature-name">{{ creature.name }}</span
             >.
           </p>
-          <button type="button" (click)="nextCreature()">Next creature</button>
+          @if (answer === creature.universe) {
+            <button type="button" (click)="nextCreature()">Next creature</button>
+          } @else {
+            <button type="button" (click)="restartGame()">Restart game</button>
+          }
         </div>
       }
     }

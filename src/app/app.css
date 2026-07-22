@@ -89,6 +89,20 @@ button:disabled:hover {
   background: #273750;
 }
 
+button.game__choice--correct,
+button.game__choice--correct:hover {
+  border-color: #257a4b;
+  background: #257a4b;
+  opacity: 1;
+}
+
+button.game__choice--incorrect,
+button.game__choice--incorrect:hover {
+  border-color: #b33a3a;
+  background: #b33a3a;
+  opacity: 1;
+}
+
 button:focus-visible {
   outline: 3px solid #7895c4;
   outline-offset: 2px;

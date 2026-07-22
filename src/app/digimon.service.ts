@@ -1,33 +1,46 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, shareReplay, switchMap } from 'rxjs';
 
 import type { Creature } from './creature.model';
 
-interface DigimonResponse {
+interface DigimonListResponse {
+  content: [DigimonSummary];
+  pageable: {
+    totalElements: number;
+  };
+}
+
+interface DigimonSummary {
+  id: number;
   name: string;
-  img: string;
-  level: string;
+  image: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class DigimonService {
   private readonly http = inject(HttpClient);
-  private readonly digimonUrl = 'https://digimon-api.vercel.app/api/digimon';
+  private readonly digimonUrl = 'https://digi-api.com/api/v1/digimon';
+  private readonly digimonCount$ = this.getDigimonPage(0).pipe(
+    map(({ pageable }) => pageable.totalElements),
+    shareReplay({ bufferSize: 1, refCount: false }),
+  );
 
   getRandomDigimon(): Observable<Creature> {
-    return this.http.get<DigimonResponse[]>(this.digimonUrl).pipe(
-      map((digimonList): Creature => {
-        const index = Math.floor(Math.random() * digimonList.length);
-        const digimon = digimonList[index];
-
-        return {
-          id: index + 1,
-          name: digimon.name,
-          imageUrl: digimon.img,
-          universe: 'digimon',
-        };
-      }),
+    return this.digimonCount$.pipe(
+      switchMap((count) => this.getDigimonPage(Math.floor(Math.random() * count))),
+      map(({ content: [digimon] }): Creature => ({
+        id: digimon.id,
+        name: digimon.name,
+        imageUrl: digimon.image,
+        universe: 'digimon',
+      })),
     );
+  }
+
+  private getDigimonPage(page: number): Observable<DigimonListResponse> {
+    return this.http.get<DigimonListResponse>(this.digimonUrl, {
+      params: { page, pageSize: 1 },
+    });
   }
 }

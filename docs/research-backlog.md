@@ -46,6 +46,7 @@ These changes do not require a backend and can be implemented independently.
 | 4     | Done     | Automatically replace a creature with a broken image | High           | Small           | Try up to two replacement creatures before showing the manual recovery state.               |
 | 5     | Open     | Load each API catalog once per session               | High           | Small to medium | Reduces repeated requests and makes local de-duplication easier.                            |
 | 6     | Deferred | Preload the next creature image                      | Medium         | Small           | Wait until catalog loading is decided so preloading does not waste API requests.            |
+| 7     | Done     | Add a streak-scaled round timer                      | High           | Medium          | Start after image load, scale from 10 to 6 seconds, and treat timeout as a lost round.      |
 
 The first experience-improvement slice was completed without committing the project to a backend or a new data architecture.
 
@@ -90,6 +91,7 @@ Do not select a backend vendor until the endpoint contract and cache behavior ar
 
 | Date       | Change                                                                                                                             |
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-23 | Added the streak-scaled round timer, retro HP bar, hidden-tab pause, and timeout result flow.                                      |
 | 2026-07-23 | Completed recent-creature deduplication, Pokémon name formatting, and automatic replacement of broken images.                      |
 | 2026-07-23 | Set the target to a public, non-commercial portfolio demo and selected a thin backend as the next architecture learning direction. |
 | 2026-07-23 | Initial research backlog created. Automated tests explicitly deferred.                                                             |

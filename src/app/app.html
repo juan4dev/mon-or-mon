@@ -4,6 +4,7 @@
     @let creature = creatureState?.creature;
     @let creatureUnavailable = creatureState?.status === 'error' || imageFailed();
     @let creatureLoading = creatureState?.status !== 'ready' || !imageReady();
+    @let roundFinished = selectedUniverse() !== null || timedOut();
 
     <header class="game__header">
       <h1 id="game-title">Mon or Mon</h1>
@@ -13,7 +14,7 @@
         [class.game__streak--active]="streak() > 0"
         [class.game__streak--maximum]="streak() >= 50"
         [class.game__streak--lost]="
-          selectedUniverse() !== null && selectedUniverse() !== creature?.universe
+          timedOut() || (selectedUniverse() !== null && selectedUniverse() !== creature?.universe)
         "
         [style.--streak-hue]="streakHue()"
         aria-live="polite"
@@ -36,7 +37,7 @@
         selectedUniverse() !== null && selectedUniverse() === creature?.universe
       "
       [class.creature-card--incorrect]="
-        selectedUniverse() !== null && selectedUniverse() !== creature?.universe
+        timedOut() || (selectedUniverse() !== null && selectedUniverse() !== creature?.universe)
       "
     >
       @if (creature && !imageFailed()) {
@@ -50,6 +51,28 @@
           (load)="handleImageLoad()"
           (error)="handleImageError()"
         />
+        @if (imageReady()) {
+          <div
+            class="creature-card__timer"
+            [class.creature-card__timer--warning]="
+              timeRemainingSeconds() <= 3 && timeRemainingSeconds() > 1
+            "
+            [class.creature-card__timer--danger]="timeRemainingSeconds() <= 1"
+            role="timer"
+            [attr.aria-label]="timeRemainingSeconds() + ' seconds remaining'"
+          >
+            <div class="creature-card__timer-meta">
+              <span>Time</span>
+              <strong>{{ timeRemainingSeconds() }}</strong>
+            </div>
+            <div class="creature-card__timer-track" aria-hidden="true">
+              <span
+                class="creature-card__timer-fill"
+                [style.width.%]="timeRemainingPercentage()"
+              ></span>
+            </div>
+          </div>
+        }
       } @else {
         <div
           class="creature-card__image creature-card__status"
@@ -68,10 +91,8 @@
     <div class="game__choices" aria-label="Creature type choices">
       <button
         type="button"
-        [disabled]="!creature || !imageReady() || selectedUniverse() !== null"
-        [class.game__choice--correct]="
-          selectedUniverse() !== null && creature?.universe === 'pokemon'
-        "
+        [disabled]="!creature || !imageReady() || roundFinished"
+        [class.game__choice--correct]="roundFinished && creature?.universe === 'pokemon'"
         [class.game__choice--incorrect]="
           selectedUniverse() === 'pokemon' && creature?.universe !== 'pokemon'
         "
@@ -81,10 +102,8 @@
       </button>
       <button
         type="button"
-        [disabled]="!creature || !imageReady() || selectedUniverse() !== null"
-        [class.game__choice--correct]="
-          selectedUniverse() !== null && creature?.universe === 'digimon'
-        "
+        [disabled]="!creature || !imageReady() || roundFinished"
+        [class.game__choice--correct]="roundFinished && creature?.universe === 'digimon'"
         [class.game__choice--incorrect]="
           selectedUniverse() === 'digimon' && creature?.universe !== 'digimon'
         "
@@ -102,6 +121,18 @@
         <button type="button" (click)="retryCreature()">Try again</button>
       } @else if (creatureLoading) {
         <p class="game__prompt">Loading creature...</p>
+      } @else if (timedOut()) {
+        @if (creature) {
+          <p class="game__result">
+            <strong>Time’s up!</strong>
+            This creature is <span class="game__creature-name">{{ creature.name }}</span
+            >.
+            @if (lostStreak() > 0) {
+              <span class="game__streak-lost">Streak lost: {{ lostStreak() }}.</span>
+            }
+          </p>
+          <button type="button" (click)="restartGame()">Restart game</button>
+        }
       } @else if (selectedUniverse(); as answer) {
         @if (creature) {
           <p class="game__result">

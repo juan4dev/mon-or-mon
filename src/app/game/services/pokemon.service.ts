@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable, switchMap } from 'rxjs';
 
-import type { Creature } from './creature.model';
+import type { Creature } from '../models/creature.model';
 
 interface PokemonListResponse {
   count: number;

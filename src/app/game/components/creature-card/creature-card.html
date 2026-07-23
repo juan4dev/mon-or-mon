@@ -1,0 +1,33 @@
+<div
+  class="creature-card"
+  [attr.aria-busy]="isLoading()"
+  [class.creature-card--correct]="isCorrect()"
+  [class.creature-card--incorrect]="isIncorrect()"
+>
+  @if (unavailable()) {
+    <div
+      class="creature-card__image creature-card__status creature-card__status--error"
+      aria-hidden="true"
+    >
+      <span class="creature-card__status-symbol">!</span>
+    </div>
+  } @else if (creature(); as creature) {
+    <img
+      class="creature-card__image"
+      [class.creature-card__image--loading]="!imageReady()"
+      [src]="creature.imageUrl"
+      alt="Mystery creature"
+      width="475"
+      height="475"
+      (load)="imageLoaded.emit()"
+      (error)="imageFailed.emit()"
+    />
+    @if (imageReady()) {
+      <app-round-timer [seconds]="seconds()" [percentage]="percentage()" />
+    }
+  } @else {
+    <div class="creature-card__image creature-card__status" aria-hidden="true">
+      <span>Loading...</span>
+    </div>
+  }
+</div>

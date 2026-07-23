@@ -1,0 +1,20 @@
+<div class="choices" aria-label="Creature type choices">
+  <button
+    type="button"
+    [disabled]="disabled()"
+    [class.choice--correct]="isCorrect('pokemon')"
+    [class.choice--incorrect]="isIncorrect('pokemon')"
+    (click)="answered.emit('pokemon')"
+  >
+    Pokémon
+  </button>
+  <button
+    type="button"
+    [disabled]="disabled()"
+    [class.choice--correct]="isCorrect('digimon')"
+    [class.choice--incorrect]="isIncorrect('digimon')"
+    (click)="answered.emit('digimon')"
+  >
+    Digimon
+  </button>
+</div>

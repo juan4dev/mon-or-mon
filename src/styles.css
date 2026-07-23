@@ -4,6 +4,13 @@
   box-sizing: border-box;
 }
 
+:root {
+  --retro-ink: #30382a;
+  --retro-muted: #68705a;
+  --retro-paper: #f5f2dc;
+  --retro-shadow: #92977c;
+}
+
 html {
   font-family: 'Courier New', ui-monospace, monospace;
 }
@@ -11,4 +18,50 @@ html {
 body {
   margin: 0;
   background: #dedfca;
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+button {
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+  border: 3px solid var(--retro-ink);
+  border-radius: 0.2rem;
+  color: var(--retro-paper);
+  background: #46513d;
+  box-shadow: 3px 3px 0 var(--retro-shadow);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--retro-ink);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--retro-shadow);
+}
+
+button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--retro-shadow);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background: #46513d;
+  transform: none;
+  box-shadow: 3px 3px 0 var(--retro-shadow);
+}
+
+button:focus-visible {
+  outline: 3px dashed #ac5e12;
+  outline-offset: 4px;
 }

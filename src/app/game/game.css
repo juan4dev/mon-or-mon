@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  color: var(--retro-ink);
+  background: #dedfca;
+}
+
+.game-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100dvh;
+  padding: 2rem 1rem;
+  align-content: center;
+}
+
+.game {
+  display: grid;
+  width: 100%;
+  max-width: 28rem;
+  min-width: 0;
+  gap: 1.25rem;
+  justify-self: center;
+  text-align: center;
+}
+
+.game__header {
+  display: grid;
+  gap: 0.5rem;
+}
+
+h1 {
+  font-size: clamp(2rem, 8vw, 3rem);
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-shadow: 3px 3px 0 #adb197;
+  text-transform: uppercase;
+}
+
+.game__question {
+  color: var(--retro-muted);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.4;
+}

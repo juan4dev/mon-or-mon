@@ -1,0 +1,57 @@
+:host {
+  display: block;
+}
+
+.feedback {
+  display: grid;
+  grid-template-rows: 4.5rem 3rem;
+  gap: 1rem;
+}
+
+.prompt,
+.result,
+.error {
+  align-self: center;
+}
+
+.prompt {
+  color: var(--retro-muted);
+  font-weight: 600;
+}
+
+.result {
+  color: var(--retro-ink);
+  animation: feedback-reveal 180ms ease-out;
+}
+
+.error {
+  color: #8e2929;
+}
+
+.creature-name {
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.streak-lost {
+  display: block;
+  margin-top: 0.25rem;
+  color: #8e2929;
+  font-weight: 700;
+}
+
+@keyframes feedback-reveal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result {
+    animation: none;
+  }
+}

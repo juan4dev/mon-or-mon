@@ -8,7 +8,7 @@ import { RoundTimerComponent } from '../round-timer/round-timer';
 
 export type CreatureCardAction = 'start' | 'retry' | 'next' | 'restart';
 
-interface CreatureCardOverlayAction {
+interface CreatureCardActionDefinition {
   label: string;
   type: CreatureCardAction;
 }
@@ -51,7 +51,7 @@ export class CreatureCardComponent {
   protected readonly isLoading = computed(
     () => this.started() && !this.unavailable() && this.loading(),
   );
-  protected readonly overlayAction = computed<CreatureCardOverlayAction | null>(() => {
+  protected readonly cardAction = computed<CreatureCardActionDefinition | null>(() => {
     if (!this.started()) {
       return { label: 'Start game', type: 'start' };
     }
@@ -73,5 +73,15 @@ export class CreatureCardComponent {
     return selectedUniverse === this.creature()?.universe
       ? { label: 'Next creature', type: 'next' }
       : { label: 'Restart game', type: 'restart' };
+  });
+  protected readonly stageAction = computed(() => {
+    const action = this.cardAction();
+
+    return action?.type === 'start' || action?.type === 'retry' ? action : null;
+  });
+  protected readonly resultAction = computed(() => {
+    const action = this.cardAction();
+
+    return action?.type === 'next' || action?.type === 'restart' ? action : null;
   });
 }

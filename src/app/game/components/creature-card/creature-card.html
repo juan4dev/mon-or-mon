@@ -29,7 +29,7 @@
       </div>
     }
 
-    @if (overlayAction(); as action) {
+    @if (stageAction(); as action) {
       <div class="creature-card__overlay">
         <button type="button" (click)="actionRequested.emit(action.type)">
           {{ action.label }}
@@ -51,7 +51,15 @@
   />
 
   <div class="creature-card__timer-slot">
-    @if (started() && imageReady()) {
+    @if (resultAction(); as action) {
+      <button
+        class="creature-card__result-action"
+        type="button"
+        (click)="actionRequested.emit(action.type)"
+      >
+        {{ action.label }}
+      </button>
+    } @else if (started() && imageReady()) {
       <app-round-timer [seconds]="seconds()" [duration]="duration()" [percentage]="percentage()" />
     }
   </div>

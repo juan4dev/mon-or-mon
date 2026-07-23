@@ -1,0 +1,273 @@
+:host {
+  display: block;
+}
+
+.creature-image {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid #7f866e;
+  background: #e6e6d2;
+}
+
+.primary,
+.duplicate {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.primary {
+  transition:
+    filter 160ms steps(2, end),
+    opacity 160ms steps(2, end);
+}
+
+.primary--loading {
+  opacity: 0.35;
+}
+
+.duplicate {
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.effect-layer {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  opacity: 1;
+  transition: opacity 160ms steps(2, end);
+  pointer-events: none;
+}
+
+.effect-badge {
+  position: absolute;
+  z-index: 3;
+  top: 0.75rem;
+  left: 0.75rem;
+  max-width: calc(100% - 1.5rem);
+  padding: 0.25rem 0.5rem;
+  border: 2px solid #5b2d12;
+  color: #fff0c2;
+  background: #9a4f19;
+  box-shadow: 2px 2px 0 rgb(48 56 42 / 45%);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.effect-badge--clear {
+  border-color: #324a2b;
+  color: #e9f4d0;
+  background: #537c35;
+}
+
+[data-phase='weak'] .effect-layer {
+  opacity: 0.48;
+}
+
+[data-phase='active'] .primary {
+  filter: var(--effect-active);
+}
+
+[data-phase='weak'] .primary {
+  filter: var(--effect-weak);
+}
+
+[data-phase='clear'] .effect-layer,
+[data-phase='clear'] .duplicate {
+  visibility: hidden;
+  opacity: 0;
+  animation: none;
+}
+
+[data-effect='rocket-hijack'] {
+  --effect-active: sepia(0.5) saturate(1.7) hue-rotate(285deg) contrast(1.15);
+  --effect-weak: sepia(0.2) saturate(1.25) hue-rotate(300deg);
+}
+
+[data-effect='rocket-hijack'] .effect-layer {
+  background: repeating-linear-gradient(
+    0deg,
+    rgb(112 20 73 / 18%) 0,
+    rgb(112 20 73 / 18%) 2px,
+    transparent 2px,
+    transparent 8px
+  );
+}
+
+[data-effect='rocket-hijack'] .effect-layer::after {
+  position: absolute;
+  inset-inline: 0;
+  height: 18%;
+  border-block: 2px solid rgb(38 122 71 / 60%);
+  background: rgb(177 40 110 / 22%);
+  content: '';
+  animation: rocket-scan 900ms steps(5, end) infinite alternate;
+}
+
+[data-effect='static-jam'] {
+  --effect-active: grayscale(1) contrast(1.65) brightness(0.58);
+  --effect-weak: grayscale(0.55) contrast(1.3) brightness(0.78);
+}
+
+[data-effect='static-jam'] .effect-layer {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(48 56 42 / 24%) 0,
+      rgb(48 56 42 / 24%) 2px,
+      transparent 2px,
+      transparent 7px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 23%,
+      rgb(245 242 220 / 22%) 24%,
+      transparent 25%
+    );
+  animation: static-jam 600ms steps(2, end) infinite;
+}
+
+[data-effect='digital-corruption'] {
+  --effect-active: saturate(0.6) contrast(1.35);
+  --effect-weak: saturate(0.82) contrast(1.15);
+}
+
+[data-effect='digital-corruption'] .effect-layer {
+  background:
+    linear-gradient(#26352b 0 0) 8% 22% / 24% 12% no-repeat,
+    linear-gradient(#826924 0 0) 76% 16% / 16% 18% no-repeat,
+    linear-gradient(#342a46 0 0) 42% 57% / 28% 13% no-repeat,
+    linear-gradient(#365a48 0 0) 82% 78% / 22% 10% no-repeat,
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 12px,
+      rgb(48 56 42 / 14%) 12px,
+      rgb(48 56 42 / 14%) 18px
+    );
+  animation: data-corruption 800ms steps(2, end) infinite alternate;
+}
+
+[data-effect='glitch-shift'] {
+  --effect-active: saturate(1.45) contrast(1.4);
+  --effect-weak: saturate(1.15) contrast(1.2);
+}
+
+[data-effect='glitch-shift']:not([data-phase='clear']) .duplicate--a {
+  opacity: 0.62;
+  filter: sepia(1) saturate(4) hue-rotate(300deg);
+  clip-path: inset(17% 0 58%);
+  animation: glitch-a 700ms steps(3, end) infinite alternate;
+}
+
+[data-effect='glitch-shift']:not([data-phase='clear']) .duplicate--b {
+  opacity: 0.58;
+  filter: sepia(1) saturate(4) hue-rotate(105deg);
+  clip-path: inset(62% 0 17%);
+  animation: glitch-b 650ms steps(3, end) infinite alternate;
+}
+
+[data-effect='glitch-shift'] .effect-layer {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 5px,
+    rgb(30 43 36 / 18%) 5px,
+    rgb(30 43 36 / 18%) 7px
+  );
+}
+
+[data-effect='shadow-lock'] {
+  --effect-active: grayscale(1) brightness(0.12) contrast(2);
+  --effect-weak: grayscale(0.8) brightness(0.38) contrast(1.65);
+}
+
+[data-effect='shadow-lock']:not([data-phase='clear']) .duplicate--a {
+  opacity: 0.9;
+  clip-path: inset(0 44%);
+  animation: shadow-scan 1200ms steps(5, end) infinite alternate;
+}
+
+[data-effect='shadow-lock'] .effect-layer {
+  background: repeating-linear-gradient(
+    0deg,
+    rgb(12 20 16 / 28%) 0,
+    rgb(12 20 16 / 28%) 3px,
+    transparent 3px,
+    transparent 9px
+  );
+}
+
+@keyframes rocket-scan {
+  from {
+    transform: translateY(-10%);
+  }
+
+  to {
+    transform: translateY(470%);
+  }
+}
+
+@keyframes static-jam {
+  50% {
+    background-position:
+      0 4px,
+      12px 0;
+  }
+}
+
+@keyframes data-corruption {
+  to {
+    background-position:
+      14% 30%,
+      70% 20%,
+      48% 51%,
+      75% 72%,
+      6px 0;
+  }
+}
+
+@keyframes glitch-a {
+  to {
+    transform: translateX(6%);
+  }
+}
+
+@keyframes glitch-b {
+  to {
+    transform: translateX(-7%);
+  }
+}
+
+@keyframes shadow-scan {
+  from {
+    clip-path: inset(0 82% 0 8%);
+  }
+
+  to {
+    clip-path: inset(0 8% 0 82%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary {
+    transition: none;
+  }
+
+  .effect-layer,
+  .effect-layer::after,
+  .duplicate {
+    animation: none !important;
+  }
+}

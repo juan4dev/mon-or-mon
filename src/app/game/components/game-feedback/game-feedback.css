@@ -21,6 +21,10 @@
   font-weight: 600;
 }
 
+.prompt--effect {
+  color: #8a5016;
+}
+
 .result {
   color: var(--retro-ink);
   animation: feedback-reveal 180ms ease-out;

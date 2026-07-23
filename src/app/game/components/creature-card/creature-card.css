@@ -67,23 +67,13 @@
     rgb(179 58 58 / 40%);
 }
 
-.creature-card__image {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1;
-  border: 2px solid #7f866e;
-  background: #e6e6d2;
-  object-fit: contain;
-}
-
-.creature-card__image--loading {
-  opacity: 0.35;
-}
-
 .creature-card__status {
   display: grid;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid #7f866e;
   color: var(--retro-muted);
+  background: #e6e6d2;
   font-weight: 700;
   place-items: center;
   text-transform: uppercase;

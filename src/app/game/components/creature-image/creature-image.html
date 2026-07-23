@@ -1,0 +1,42 @@
+<div
+  class="creature-image"
+  [attr.data-effect]="effect()?.id ?? null"
+  [attr.data-phase]="effect() ? effectPhase() : null"
+>
+  <img
+    class="primary"
+    [class.primary--loading]="!imageReady()"
+    [src]="creature().imageUrl"
+    alt="Mystery creature"
+    width="475"
+    height="475"
+    (load)="imageLoaded.emit()"
+    (error)="imageFailed.emit()"
+  />
+
+  @if (imageReady() && effect()) {
+    @if (requiresDuplicateLayers()) {
+      <img
+        class="duplicate duplicate--a"
+        [src]="creature().imageUrl"
+        alt=""
+        width="475"
+        height="475"
+        aria-hidden="true"
+      />
+      <img
+        class="duplicate duplicate--b"
+        [src]="creature().imageUrl"
+        alt=""
+        width="475"
+        height="475"
+        aria-hidden="true"
+      />
+    }
+
+    <div class="effect-layer" aria-hidden="true"></div>
+    <span class="effect-badge" [class.effect-badge--clear]="effectPhase() === 'clear'">
+      {{ badgeLabel() }}
+    </span>
+  }
+</div>

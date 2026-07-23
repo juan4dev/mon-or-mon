@@ -29,6 +29,16 @@
         }
       </p>
     }
+  } @else if (roundEffect(); as effect) {
+    @if (effectPhase() === 'active') {
+      <p class="prompt prompt--effect">
+        <strong>{{ effect.label }}.</strong> {{ effect.prompt }}
+      </p>
+    } @else if (effectPhase() === 'weak') {
+      <p class="prompt prompt--effect"><strong>Signal stabilizing...</strong></p>
+    } @else {
+      <p class="prompt prompt--effect"><strong>Signal restored.</strong> Who’s this creature?</p>
+    }
   } @else {
     <p class="prompt">Who’s this creature?</p>
   }

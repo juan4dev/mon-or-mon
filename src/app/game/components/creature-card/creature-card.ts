@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import type { Creature, CreatureUniverse } from '../../models/creature.model';
+import type { RoundEffectDefinition, RoundEffectPhase } from '../../models/round-effect.model';
+import { CreatureImageComponent } from '../creature-image/creature-image';
 import { GameFeedbackComponent } from '../game-feedback/game-feedback';
 import { RoundTimerComponent } from '../round-timer/round-timer';
 
@@ -13,7 +15,7 @@ interface CreatureCardOverlayAction {
 
 @Component({
   selector: 'app-creature-card',
-  imports: [GameFeedbackComponent, RoundTimerComponent],
+  imports: [CreatureImageComponent, GameFeedbackComponent, RoundTimerComponent],
   templateUrl: './creature-card.html',
   styleUrl: './creature-card.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +29,9 @@ export class CreatureCardComponent {
   readonly selectedUniverse = input<CreatureUniverse | null>(null);
   readonly timedOut = input.required<boolean>();
   readonly lostStreak = input.required<number>();
+  readonly roundEffect = input<RoundEffectDefinition | null>(null);
+  readonly effectPhase = input.required<RoundEffectPhase>();
+  readonly bossRound = input.required<boolean>();
   readonly seconds = input.required<number>();
   readonly duration = input.required<number>();
   readonly percentage = input.required<number>();

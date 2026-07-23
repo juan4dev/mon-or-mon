@@ -17,6 +17,12 @@ import {
 } from './components/creature-card/creature-card';
 import { StreakDisplayComponent } from './components/streak-display/streak-display';
 import type { Creature, CreatureUniverse } from './models/creature.model';
+import type {
+  RoundEffectDefinition,
+  RoundEffectId,
+  RoundEffectPhase,
+} from './models/round-effect.model';
+import { getEffectRecoverySeconds, selectRoundEffect } from './round-effects';
 import { DigimonService } from './services/digimon.service';
 import { PokemonService } from './services/pokemon.service';
 
@@ -43,6 +49,7 @@ export class GameComponent {
   private readonly duplicateRetryLimit = 5;
   private readonly imageReplacementLimit = 2;
   private imageReplacementAttempts = 0;
+  private lastRoundEffectId: RoundEffectId | null = null;
   private timerId: ReturnType<typeof setInterval> | null = null;
 
   protected readonly selectedUniverse = signal<CreatureUniverse | null>(null);
@@ -52,11 +59,29 @@ export class GameComponent {
   protected readonly imageFailed = signal(false);
   protected readonly timedOut = signal(false);
   protected readonly hasStarted = signal(false);
+  protected readonly roundEffect = signal<RoundEffectDefinition | null>(null);
+  protected readonly bossRound = signal(false);
   protected readonly roundDurationSeconds = signal(10);
   protected readonly timeRemainingSeconds = signal(10);
   protected readonly timeRemainingPercentage = computed(
     () => (this.timeRemainingSeconds() / this.roundDurationSeconds()) * 100,
   );
+  protected readonly effectPhase = computed<RoundEffectPhase>(() => {
+    const effect = this.roundEffect();
+
+    if (!effect || this.selectedUniverse() !== null || this.timedOut()) {
+      return 'clear';
+    }
+
+    const recoverySeconds = getEffectRecoverySeconds(effect.recovery, this.roundDurationSeconds());
+    const timeRemainingSeconds = this.timeRemainingSeconds();
+
+    if (timeRemainingSeconds <= recoverySeconds) {
+      return 'clear';
+    }
+
+    return timeRemainingSeconds <= recoverySeconds + 1 ? 'weak' : 'active';
+  });
   protected creatureState$: Observable<CreatureLoadState> = of({
     status: 'idle',
     creature: null,
@@ -86,6 +111,7 @@ export class GameComponent {
     } else {
       this.lostStreak.set(this.streak());
       this.streak.set(0);
+      this.lastRoundEffectId = null;
     }
   }
 
@@ -96,11 +122,13 @@ export class GameComponent {
   protected startGame(): void {
     this.hasStarted.set(true);
     this.streak.set(0);
+    this.lastRoundEffectId = null;
     this.startRound();
   }
 
   protected restartGame(): void {
     this.streak.set(0);
+    this.lastRoundEffectId = null;
     this.startRound();
   }
 
@@ -150,12 +178,15 @@ export class GameComponent {
 
     if (resetImageReplacementAttempts) {
       this.imageReplacementAttempts = 0;
+      const roundEffectSelection = selectRoundEffect(this.streak(), this.lastRoundEffectId);
+
+      this.roundDurationSeconds.set(this.getRoundDurationSeconds());
+      this.roundEffect.set(roundEffectSelection.effect);
+      this.bossRound.set(roundEffectSelection.isBossRound);
+      this.lastRoundEffectId = roundEffectSelection.effect?.id ?? null;
     }
 
-    const roundDurationSeconds = this.getRoundDurationSeconds();
-
-    this.roundDurationSeconds.set(roundDurationSeconds);
-    this.timeRemainingSeconds.set(roundDurationSeconds);
+    this.timeRemainingSeconds.set(this.roundDurationSeconds());
     this.selectedUniverse.set(null);
     this.timedOut.set(false);
     this.lostStreak.set(0);
@@ -269,6 +300,7 @@ export class GameComponent {
     this.timeRemainingSeconds.set(0);
     this.lostStreak.set(this.streak());
     this.streak.set(0);
+    this.lastRoundEffectId = null;
     this.timedOut.set(true);
   }
 

@@ -8,3 +8,7 @@ A visual guessing game where you decide whether each creature is a Pokémon or a
 npm install
 npm start
 ```
+
+## Project notes
+
+- [Research backlog](docs/research-backlog.md)

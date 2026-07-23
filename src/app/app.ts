@@ -6,6 +6,7 @@ import type { Observable } from 'rxjs';
 import type { Creature, CreatureUniverse } from './creature.model';
 import { DigimonService } from './digimon.service';
 import { PokemonService } from './pokemon.service';
+import { RoundTimerComponent } from './round-timer/round-timer';
 
 type CreatureLoadState =
   | { status: 'loading'; creature: null }
@@ -14,7 +15,7 @@ type CreatureLoadState =
 
 @Component({
   selector: 'app-root',
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, RoundTimerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

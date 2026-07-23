@@ -1,0 +1,15 @@
+<div
+  class="round-timer"
+  [class.round-timer--warning]="isWarning()"
+  [class.round-timer--danger]="isDanger()"
+  role="timer"
+  [attr.aria-label]="seconds() + ' seconds remaining'"
+>
+  <div class="round-timer__meta">
+    <span>Time</span>
+    <strong>{{ seconds() }}</strong>
+  </div>
+  <div class="round-timer__track" aria-hidden="true">
+    <span class="round-timer__fill" [style.width.%]="fillPercentage()"></span>
+  </div>
+</div>

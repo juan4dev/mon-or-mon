@@ -52,26 +52,10 @@
           (error)="handleImageError()"
         />
         @if (imageReady()) {
-          <div
-            class="creature-card__timer"
-            [class.creature-card__timer--warning]="
-              timeRemainingSeconds() <= 3 && timeRemainingSeconds() > 1
-            "
-            [class.creature-card__timer--danger]="timeRemainingSeconds() <= 1"
-            role="timer"
-            [attr.aria-label]="timeRemainingSeconds() + ' seconds remaining'"
-          >
-            <div class="creature-card__timer-meta">
-              <span>Time</span>
-              <strong>{{ timeRemainingSeconds() }}</strong>
-            </div>
-            <div class="creature-card__timer-track" aria-hidden="true">
-              <span
-                class="creature-card__timer-fill"
-                [style.width.%]="timeRemainingPercentage()"
-              ></span>
-            </div>
-          </div>
+          <app-round-timer
+            [seconds]="timeRemainingSeconds()"
+            [percentage]="timeRemainingPercentage()"
+          />
         }
       } @else {
         <div

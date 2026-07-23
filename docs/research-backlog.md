@@ -18,6 +18,7 @@ This document tracks product, API, legal, and architecture questions that should
 - Do not assume that API access grants permission to use character names, artwork, or trademarks.
 - Explore a thin backend as a deliberate full-stack learning step.
 - Keep accounts, global leaderboards, monetization, and a database out of the first backend iteration.
+- Extract cohesive visual responsibilities into focused Angular components as the interface grows.
 - Automated tests are intentionally deferred for the current iteration.
 
 ## Research backlog
@@ -91,6 +92,7 @@ Do not select a backend vendor until the endpoint contract and cache behavior ar
 
 | Date       | Change                                                                                                                             |
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-23 | Extracted the timer presentation and styles into `RoundTimerComponent` while keeping game timing in `App`.                         |
 | 2026-07-23 | Added the streak-scaled round timer, retro HP bar, hidden-tab pause, and timeout result flow.                                      |
 | 2026-07-23 | Completed recent-creature deduplication, Pokémon name formatting, and automatic replacement of broken images.                      |
 | 2026-07-23 | Set the target to a public, non-commercial portfolio demo and selected a thin backend as the next architecture learning direction. |

@@ -2,8 +2,8 @@
   <section class="game" aria-labelledby="game-title">
     @let creatureState = creatureState$ | async;
     @let creature = creatureState?.creature;
-    @let creatureUnavailable = creatureState?.status === 'error' || imageFailed();
-    @let creatureLoading = creatureState?.status !== 'ready' || !imageReady();
+    @let creatureUnavailable = hasStarted() && (creatureState?.status === 'error' || imageFailed());
+    @let creatureLoading = hasStarted() && (creatureState?.status !== 'ready' || !imageReady());
 
     <header class="game__header">
       <h1 id="game-title">Mon or Mon</h1>
@@ -18,35 +18,29 @@
     </header>
 
     <app-creature-card
+      [started]="hasStarted()"
       [creature]="creature ?? null"
       [imageReady]="imageReady()"
-      [unavailable]="creatureUnavailable"
-      [selectedUniverse]="selectedUniverse()"
-      [timedOut]="timedOut()"
-      [seconds]="timeRemainingSeconds()"
-      [percentage]="timeRemainingPercentage()"
-      (imageLoaded)="handleImageLoad()"
-      (imageFailed)="handleImageError()"
-    />
-
-    <app-answer-choices
-      [creatureUniverse]="creature?.universe ?? null"
-      [selectedUniverse]="selectedUniverse()"
-      [enabled]="creatureState?.status === 'ready' && imageReady()"
-      [timedOut]="timedOut()"
-      (answered)="answer($event, creature)"
-    />
-
-    <app-game-feedback
-      [creature]="creature ?? null"
       [unavailable]="creatureUnavailable"
       [loading]="creatureLoading"
       [selectedUniverse]="selectedUniverse()"
       [timedOut]="timedOut()"
       [lostStreak]="lostStreak()"
-      (retryRequested)="retryCreature()"
-      (nextRequested)="nextCreature()"
-      (restartRequested)="restartGame()"
+      [seconds]="timeRemainingSeconds()"
+      [percentage]="timeRemainingPercentage()"
+      (imageLoaded)="handleImageLoad()"
+      (imageFailed)="handleImageError()"
+      (actionRequested)="handleCardAction($event)"
     />
+
+    @if (hasStarted()) {
+      <app-answer-choices
+        [creatureUniverse]="creature?.universe ?? null"
+        [selectedUniverse]="selectedUniverse()"
+        [enabled]="creatureState?.status === 'ready' && imageReady()"
+        [timedOut]="timedOut()"
+        (answered)="answer($event, creature)"
+      />
+    }
   </section>
 </main>

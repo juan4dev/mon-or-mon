@@ -23,9 +23,3 @@ button.choice--incorrect:hover {
   box-shadow: 3px 3px 0 #702424;
   opacity: 1;
 }
-
-@media (max-width: 24rem) {
-  .choices {
-    grid-template-columns: 1fr;
-  }
-}

@@ -42,3 +42,18 @@ h1 {
   font-weight: 700;
   line-height: 1.4;
 }
+
+@media (max-width: 30rem) {
+  .game-page {
+    padding: 1rem 0.75rem;
+    align-content: start;
+  }
+
+  .game {
+    gap: 0.75rem;
+  }
+
+  .game__header {
+    gap: 0.375rem;
+  }
+}

@@ -1,9 +1,10 @@
 <div class="feedback" aria-live="polite">
-  @if (unavailable()) {
+  @if (!started()) {
+    <p class="prompt">Press Start when you’re ready.</p>
+  } @else if (unavailable()) {
     <p class="error" role="alert">
       <strong>Couldn’t load a creature.</strong> Check your connection and try again.
     </p>
-    <button type="button" (click)="retryRequested.emit()">Try again</button>
   } @else if (loading()) {
     <p class="prompt">Loading creature...</p>
   } @else if (timedOut()) {
@@ -16,7 +17,6 @@
           <span class="streak-lost">Streak lost: {{ lostStreak() }}.</span>
         }
       </p>
-      <button type="button" (click)="restartRequested.emit()">Restart game</button>
     }
   } @else if (selectedUniverse(); as answer) {
     @if (creature(); as creature) {
@@ -28,11 +28,6 @@
           <span class="streak-lost">Streak lost: {{ lostStreak() }}.</span>
         }
       </p>
-      @if (answer === creature.universe) {
-        <button type="button" (click)="nextRequested.emit()">Next creature</button>
-      } @else {
-        <button type="button" (click)="restartRequested.emit()">Restart game</button>
-      }
     }
   } @else {
     <p class="prompt">Who’s this creature?</p>

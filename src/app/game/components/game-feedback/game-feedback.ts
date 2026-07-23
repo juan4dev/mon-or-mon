@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import type { Creature, CreatureUniverse } from '../../models/creature.model';
 
@@ -9,14 +9,11 @@ import type { Creature, CreatureUniverse } from '../../models/creature.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GameFeedbackComponent {
+  readonly started = input.required<boolean>();
   readonly creature = input<Creature | null>(null);
   readonly unavailable = input.required<boolean>();
   readonly loading = input.required<boolean>();
   readonly selectedUniverse = input<CreatureUniverse | null>(null);
   readonly timedOut = input.required<boolean>();
   readonly lostStreak = input.required<number>();
-
-  readonly retryRequested = output<void>();
-  readonly nextRequested = output<void>();
-  readonly restartRequested = output<void>();
 }

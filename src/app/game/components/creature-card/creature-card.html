@@ -4,30 +4,60 @@
   [class.creature-card--correct]="isCorrect()"
   [class.creature-card--incorrect]="isIncorrect()"
 >
-  @if (unavailable()) {
-    <div
-      class="creature-card__image creature-card__status creature-card__status--error"
-      aria-hidden="true"
-    >
-      <span class="creature-card__status-symbol">!</span>
-    </div>
-  } @else if (creature(); as creature) {
-    <img
-      class="creature-card__image"
-      [class.creature-card__image--loading]="!imageReady()"
-      [src]="creature.imageUrl"
-      alt="Mystery creature"
-      width="475"
-      height="475"
-      (load)="imageLoaded.emit()"
-      (error)="imageFailed.emit()"
-    />
-    @if (imageReady()) {
+  <div class="creature-card__stage">
+    @if (!started()) {
+      <div
+        class="creature-card__image creature-card__status creature-card__status--idle"
+        aria-hidden="true"
+      >
+        <span class="creature-card__status-symbol">?</span>
+      </div>
+    } @else if (unavailable()) {
+      <div
+        class="creature-card__image creature-card__status creature-card__status--error"
+        aria-hidden="true"
+      >
+        <span class="creature-card__status-symbol">!</span>
+      </div>
+    } @else if (creature(); as creature) {
+      <img
+        class="creature-card__image"
+        [class.creature-card__image--loading]="!imageReady()"
+        [src]="creature.imageUrl"
+        alt="Mystery creature"
+        width="475"
+        height="475"
+        (load)="imageLoaded.emit()"
+        (error)="imageFailed.emit()"
+      />
+    } @else {
+      <div class="creature-card__image creature-card__status" aria-hidden="true">
+        <span>Loading...</span>
+      </div>
+    }
+
+    @if (overlayAction(); as action) {
+      <div class="creature-card__overlay">
+        <button type="button" (click)="actionRequested.emit(action.type)">
+          {{ action.label }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <app-game-feedback
+    [started]="started()"
+    [creature]="creature()"
+    [unavailable]="unavailable()"
+    [loading]="loading()"
+    [selectedUniverse]="selectedUniverse()"
+    [timedOut]="timedOut()"
+    [lostStreak]="lostStreak()"
+  />
+
+  <div class="creature-card__timer-slot">
+    @if (started() && imageReady()) {
       <app-round-timer [seconds]="seconds()" [percentage]="percentage()" />
     }
-  } @else {
-    <div class="creature-card__image creature-card__status" aria-hidden="true">
-      <span>Loading...</span>
-    </div>
-  }
+  </div>
 </div>

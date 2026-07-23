@@ -11,27 +11,24 @@ import { catchError, map, of, startWith, switchMap, timeout } from 'rxjs';
 import type { Observable } from 'rxjs';
 
 import { AnswerChoicesComponent } from './components/answer-choices/answer-choices';
-import { CreatureCardComponent } from './components/creature-card/creature-card';
-import { GameFeedbackComponent } from './components/game-feedback/game-feedback';
+import {
+  CreatureCardComponent,
+  type CreatureCardAction,
+} from './components/creature-card/creature-card';
 import { StreakDisplayComponent } from './components/streak-display/streak-display';
 import type { Creature, CreatureUniverse } from './models/creature.model';
 import { DigimonService } from './services/digimon.service';
 import { PokemonService } from './services/pokemon.service';
 
 type CreatureLoadState =
+  | { status: 'idle'; creature: null }
   | { status: 'loading'; creature: null }
   | { status: 'ready'; creature: Creature }
   | { status: 'error'; creature: null };
 
 @Component({
   selector: 'app-game',
-  imports: [
-    AsyncPipe,
-    AnswerChoicesComponent,
-    CreatureCardComponent,
-    GameFeedbackComponent,
-    StreakDisplayComponent,
-  ],
+  imports: [AsyncPipe, AnswerChoicesComponent, CreatureCardComponent, StreakDisplayComponent],
   templateUrl: './game.html',
   styleUrl: './game.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,12 +51,16 @@ export class GameComponent {
   protected readonly imageReady = signal(false);
   protected readonly imageFailed = signal(false);
   protected readonly timedOut = signal(false);
+  protected readonly hasStarted = signal(false);
   private readonly roundDurationSeconds = signal(10);
   protected readonly timeRemainingSeconds = signal(10);
   protected readonly timeRemainingPercentage = computed(
     () => (this.timeRemainingSeconds() / this.roundDurationSeconds()) * 100,
   );
-  protected creatureState$ = this.loadCreature();
+  protected creatureState$: Observable<CreatureLoadState> = of({
+    status: 'idle',
+    creature: null,
+  });
 
   constructor() {
     this.document.addEventListener('visibilitychange', this.handleVisibilityChange);
@@ -92,6 +93,12 @@ export class GameComponent {
     this.startRound();
   }
 
+  protected startGame(): void {
+    this.hasStarted.set(true);
+    this.streak.set(0);
+    this.startRound();
+  }
+
   protected restartGame(): void {
     this.streak.set(0);
     this.startRound();
@@ -99,6 +106,23 @@ export class GameComponent {
 
   protected retryCreature(): void {
     this.startRound();
+  }
+
+  protected handleCardAction(action: CreatureCardAction): void {
+    switch (action) {
+      case 'start':
+        this.startGame();
+        break;
+      case 'retry':
+        this.retryCreature();
+        break;
+      case 'next':
+        this.nextCreature();
+        break;
+      case 'restart':
+        this.restartGame();
+        break;
+    }
   }
 
   protected handleImageLoad(): void {
@@ -208,6 +232,7 @@ export class GameComponent {
 
   private startTimer(): void {
     if (
+      !this.hasStarted() ||
       this.document.hidden ||
       this.timeRemainingSeconds() <= 0 ||
       this.selectedUniverse() !== null ||
@@ -254,7 +279,7 @@ export class GameComponent {
       return;
     }
 
-    if (this.imageReady() && !this.imageFailed()) {
+    if (this.hasStarted() && this.imageReady() && !this.imageFailed()) {
       this.startTimer();
     }
   };

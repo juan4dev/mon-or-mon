@@ -42,10 +42,17 @@ export class PokemonService {
       switchMap(({ results }) => this.http.get<PokemonResponse>(results[0].url)),
       map((pokemon): Creature => ({
         id: pokemon.id,
-        name: pokemon.name,
+        name: this.formatName(pokemon.name),
         imageUrl: pokemon.sprites.other['official-artwork'].front_default,
         universe: 'pokemon',
       })),
     );
+  }
+
+  private formatName(name: string): string {
+    return name
+      .split('-')
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 }

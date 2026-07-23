@@ -22,32 +22,32 @@ This document tracks product, API, legal, and architecture questions that should
 
 ## Research backlog
 
-| ID | Priority | Status | Topic | Question or outcome needed | Next action |
-| --- | --- | --- | --- | --- | --- |
-| R-001 | P0 | Done | Distribution goal | The target is a public, non-commercial, educational portfolio demo. It is not intended to attract players or generate revenue. | Keep this positioning visible in the README and deployed application. |
-| R-002 | P0 | Open | Pokémon rights | Are the Pokémon names and images permitted for the chosen distribution model? | Review the official Pokémon guidance and obtain qualified legal advice or permission before a public or commercial release. |
-| R-003 | P0 | Open | Digimon rights | Are the Digimon names and images permitted for the chosen distribution model? | Identify the relevant Bandai terms or permission process and do not treat Digi-API as a rights grant. |
-| R-004 | P1 | Ready | Backend direction | Use a thin backend to learn full-stack development and improve provider isolation, response validation, caching, and stale-data fallback. | Define one round endpoint and its cache behavior before selecting a platform or framework. |
-| R-005 | P1 | Open | Creature catalog | Should creatures be loaded from live APIs, a build-time catalog, or a backend endpoint? | Decide after R-004. Prefer a static validated catalog if live freshness is not required. |
-| R-006 | P1 | Open | API resilience | What should happen when an API response changes or an image fails to load? | Define a limited retry and automatic creature replacement policy. |
-| R-007 | P1 | Open | Game balance | Should alternate forms, recolors, fusions, and very obscure creatures appear at the same frequency as base forms? | Define an initial curated pool and optional difficulty levels. |
-| R-008 | P2 | Open | Privacy | Will the game collect analytics, accounts, IP-derived data, or persistent identifiers? | Create a privacy checklist before adding analytics or backend persistence. |
-| R-009 | P2 | Open | Operations | What availability and monitoring are required for a public release? | Define expected traffic and add lightweight API/schema monitoring only when needed. |
+| ID    | Priority | Status | Topic             | Question or outcome needed                                                                                                                | Next action                                                                                                                 |
+| ----- | -------- | ------ | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| R-001 | P0       | Done   | Distribution goal | The target is a public, non-commercial, educational portfolio demo. It is not intended to attract players or generate revenue.            | Keep this positioning visible in the README and deployed application.                                                       |
+| R-002 | P0       | Open   | Pokémon rights    | Are the Pokémon names and images permitted for the chosen distribution model?                                                             | Review the official Pokémon guidance and obtain qualified legal advice or permission before a public or commercial release. |
+| R-003 | P0       | Open   | Digimon rights    | Are the Digimon names and images permitted for the chosen distribution model?                                                             | Identify the relevant Bandai terms or permission process and do not treat Digi-API as a rights grant.                       |
+| R-004 | P1       | Ready  | Backend direction | Use a thin backend to learn full-stack development and improve provider isolation, response validation, caching, and stale-data fallback. | Define one round endpoint and its cache behavior before selecting a platform or framework.                                  |
+| R-005 | P1       | Open   | Creature catalog  | Should creatures be loaded from live APIs, a build-time catalog, or a backend endpoint?                                                   | Decide after R-004. Prefer a static validated catalog if live freshness is not required.                                    |
+| R-006 | P1       | Open   | API resilience    | What should happen when an API response changes or an image fails to load?                                                                | Define a limited retry and automatic creature replacement policy.                                                           |
+| R-007 | P1       | Open   | Game balance      | Should alternate forms, recolors, fusions, and very obscure creatures appear at the same frequency as base forms?                         | Define an initial curated pool and optional difficulty levels.                                                              |
+| R-008 | P2       | Open   | Privacy           | Will the game collect analytics, accounts, IP-derived data, or persistent identifiers?                                                    | Create a privacy checklist before adding analytics or backend persistence.                                                  |
+| R-009 | P2       | Open   | Operations        | What availability and monitoring are required for a public release?                                                                       | Define expected traffic and add lightweight API/schema monitoring only when needed.                                         |
 
 ## Small experience improvements
 
 These changes do not require a backend and can be implemented independently.
 
-| Order | Improvement | Expected value | Effort | Notes |
-| --- | --- | --- | --- | --- |
-| 1 | Avoid repeated creatures during the current session | High | Small | Keep a bounded set of recently shown creature keys. |
-| 2 | Preserve the best streak locally | Medium | Small | Use local storage; no account is required. |
-| 3 | Format creature names for display | Medium | Small | Convert API names such as `mr-mime` into user-facing text without changing API identifiers. |
-| 4 | Automatically replace a creature with a broken image | High | Small | Retry with a different creature instead of requiring a manual recovery step. |
-| 5 | Load each API catalog once per session | High | Small to medium | Reduces repeated requests and makes local de-duplication easier. |
-| 6 | Preload the next creature image | Medium | Small | Defer until catalog loading is decided so preloading does not waste API requests. |
+| Order | Status   | Improvement                                          | Expected value | Effort          | Notes                                                                                       |
+| ----- | -------- | ---------------------------------------------------- | -------------- | --------------- | ------------------------------------------------------------------------------------------- |
+| 1     | Done     | Avoid repeated creatures during the current session  | High           | Small           | Keep the 50 most recently shown creature keys and retry duplicates up to five times.        |
+| 2     | Open     | Preserve the best streak locally                     | Medium         | Small           | Use local storage; no account is required.                                                  |
+| 3     | Done     | Format creature names for display                    | Medium         | Small           | Convert API names such as `mr-mime` into user-facing text without changing API identifiers. |
+| 4     | Done     | Automatically replace a creature with a broken image | High           | Small           | Try up to two replacement creatures before showing the manual recovery state.               |
+| 5     | Open     | Load each API catalog once per session               | High           | Small to medium | Reduces repeated requests and makes local de-duplication easier.                            |
+| 6     | Deferred | Preload the next creature image                      | Medium         | Small           | Wait until catalog loading is decided so preloading does not waste API requests.            |
 
-Recommended first slice: items 1, 3, and 4. They improve the game loop without committing the project to a backend or a new data architecture.
+The first experience-improvement slice was completed without committing the project to a backend or a new data architecture.
 
 ## Backend decision guide
 
@@ -88,7 +88,8 @@ Do not select a backend vendor until the endpoint contract and cache behavior ar
 
 ## Review log
 
-| Date | Change |
-| --- | --- |
+| Date       | Change                                                                                                                             |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-23 | Completed recent-creature deduplication, Pokémon name formatting, and automatic replacement of broken images.                      |
 | 2026-07-23 | Set the target to a public, non-commercial portfolio demo and selected a thin backend as the next architecture learning direction. |
-| 2026-07-23 | Initial research backlog created. Automated tests explicitly deferred. |
+| 2026-07-23 | Initial research backlog created. Automated tests explicitly deferred.                                                             |

@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { catchError, map, of, startWith, timeout } from 'rxjs';
+import { catchError, map, of, startWith, switchMap, timeout } from 'rxjs';
 import type { Observable } from 'rxjs';
 
 import type { Creature, CreatureUniverse } from './creature.model';
@@ -21,6 +21,11 @@ type CreatureLoadState =
 export class App {
   private readonly digimonService = inject(DigimonService);
   private readonly pokemonService = inject(PokemonService);
+  private readonly recentCreatureKeys = new Set<string>();
+  private readonly recentCreatureLimit = 50;
+  private readonly duplicateRetryLimit = 5;
+  private readonly imageReplacementLimit = 2;
+  private imageReplacementAttempts = 0;
 
   protected readonly selectedUniverse = signal<CreatureUniverse | null>(null);
   protected readonly streak = signal(0);
@@ -61,15 +66,28 @@ export class App {
   }
 
   protected handleImageLoad(): void {
+    this.imageReplacementAttempts = 0;
     this.imageReady.set(true);
   }
 
   protected handleImageError(): void {
     this.imageReady.set(false);
+
+    if (this.imageReplacementAttempts < this.imageReplacementLimit) {
+      this.imageReplacementAttempts += 1;
+      this.startRound(false);
+
+      return;
+    }
+
     this.imageFailed.set(true);
   }
 
-  private startRound(): void {
+  private startRound(resetImageReplacementAttempts = true): void {
+    if (resetImageReplacementAttempts) {
+      this.imageReplacementAttempts = 0;
+    }
+
     this.selectedUniverse.set(null);
     this.lostStreak.set(0);
     this.imageReady.set(false);
@@ -78,7 +96,7 @@ export class App {
   }
 
   private loadCreature(): Observable<CreatureLoadState> {
-    return this.getRandomCreature().pipe(
+    return this.getUniqueRandomCreature().pipe(
       timeout({ first: 12_000 }),
       map((creature): CreatureLoadState => ({ status: 'ready', creature })),
       startWith({ status: 'loading', creature: null } as const),
@@ -90,5 +108,34 @@ export class App {
     return Math.random() < 0.5
       ? this.pokemonService.getRandomPokemon()
       : this.digimonService.getRandomDigimon();
+  }
+
+  private getUniqueRandomCreature(retriesLeft = this.duplicateRetryLimit): Observable<Creature> {
+    return this.getRandomCreature().pipe(
+      switchMap((creature) => {
+        const key = `${creature.universe}:${creature.id}`;
+
+        if (retriesLeft > 0 && this.recentCreatureKeys.has(key)) {
+          return this.getUniqueRandomCreature(retriesLeft - 1);
+        }
+
+        this.rememberCreature(key);
+
+        return of(creature);
+      }),
+    );
+  }
+
+  private rememberCreature(key: string): void {
+    this.recentCreatureKeys.delete(key);
+    this.recentCreatureKeys.add(key);
+
+    if (this.recentCreatureKeys.size > this.recentCreatureLimit) {
+      const oldestKey = this.recentCreatureKeys.values().next().value;
+
+      if (oldestKey) {
+        this.recentCreatureKeys.delete(oldestKey);
+      }
+    }
   }
 }

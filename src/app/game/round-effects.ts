@@ -3,16 +3,11 @@ import type {
   RoundEffectId,
   RoundEffectRecovery,
 } from './models/round-effect.model';
+import { getRoundDifficulty, type RoundDifficulty } from './difficulty';
 
 interface EffectWeight {
   effect: RoundEffectDefinition;
   weight: number;
-}
-
-interface EffectBand {
-  minimumStreak: number;
-  probability: number;
-  weights: Partial<Record<RoundEffectId, number>>;
 }
 
 export interface RoundEffectSelection {
@@ -24,110 +19,58 @@ const ROUND_EFFECTS: readonly RoundEffectDefinition[] = [
   {
     id: 'rocket-hijack',
     label: 'Rocket Hijack',
-    minimumStreak: 3,
     prompt: 'A foreign scan is distorting the image.',
     recovery: 'early',
   },
   {
     id: 'static-jam',
     label: 'Static Jam',
-    minimumStreak: 5,
     prompt: 'Guess now or wait for the scan.',
     recovery: 'half',
   },
   {
     id: 'digital-corruption',
     label: 'Digital Corruption',
-    minimumStreak: 10,
     prompt: 'Read the remaining data or wait.',
-    recovery: 'late',
+    recovery: 'last-two',
   },
   {
     id: 'glitch-shift',
     label: 'Glitch Shift',
-    minimumStreak: 15,
     prompt: 'Image sectors have been displaced.',
-    recovery: 'last-three',
+    recovery: 'last-one',
   },
   {
     id: 'shadow-lock',
     label: 'Shadow Lock',
-    minimumStreak: 20,
     prompt: 'Trust the silhouette or wait.',
-    recovery: 'last-three',
-  },
-];
-
-const EFFECT_BANDS: readonly EffectBand[] = [
-  {
-    minimumStreak: 3,
-    probability: 0.2,
-    weights: { 'rocket-hijack': 100 },
-  },
-  {
-    minimumStreak: 5,
-    probability: 0.35,
-    weights: { 'rocket-hijack': 60, 'static-jam': 40 },
-  },
-  {
-    minimumStreak: 10,
-    probability: 0.5,
-    weights: {
-      'rocket-hijack': 30,
-      'static-jam': 45,
-      'digital-corruption': 25,
-    },
-  },
-  {
-    minimumStreak: 15,
-    probability: 0.6,
-    weights: {
-      'rocket-hijack': 15,
-      'static-jam': 30,
-      'digital-corruption': 35,
-      'glitch-shift': 20,
-    },
-  },
-  {
-    minimumStreak: 20,
-    probability: 0.7,
-    weights: {
-      'rocket-hijack': 10,
-      'static-jam': 20,
-      'digital-corruption': 30,
-      'glitch-shift': 25,
-      'shadow-lock': 15,
-    },
-  },
-  {
-    minimumStreak: 25,
-    probability: 0.75,
-    weights: {
-      'rocket-hijack': 5,
-      'static-jam': 10,
-      'digital-corruption': 20,
-      'glitch-shift': 30,
-      'shadow-lock': 35,
-    },
+    recovery: 'last-one',
   },
 ];
 
 export function selectRoundEffect(
-  streak: number,
+  roundNumber: number,
   previousEffectId: RoundEffectId | null,
   random: () => number = Math.random,
 ): RoundEffectSelection {
-  const isBossRound = streak > 0 && streak % 5 === 0;
-  const unlockedEffects = ROUND_EFFECTS.filter((effect) => streak >= effect.minimumStreak);
+  const difficulty = getRoundDifficulty(roundNumber);
+  const isBossRound = roundNumber >= 5 && roundNumber % 5 === 0;
+  const unlockedEffects = ROUND_EFFECTS.filter(
+    (effect) => (difficulty.effectWeights[effect.id] ?? 0) > 0,
+  );
 
   if (unlockedEffects.length === 0) {
     return { effect: null, isBossRound: false };
   }
 
-  const weightedEffects = isBossRound
-    ? getBossWeights(unlockedEffects)
-    : getRegularWeights(streak, unlockedEffects, random);
+  if (isBossRound) {
+    return {
+      effect: pickWeightedEffect(getBossWeights(unlockedEffects), random),
+      isBossRound: true,
+    };
+  }
 
+  const weightedEffects = getRegularWeights(difficulty, unlockedEffects, random);
   if (weightedEffects.length === 0) {
     return { effect: null, isBossRound: false };
   }
@@ -139,7 +82,7 @@ export function selectRoundEffect(
 
   return {
     effect: pickWeightedEffect(variedEffects, random),
-    isBossRound,
+    isBossRound: false,
   };
 }
 
@@ -149,13 +92,13 @@ export function getEffectRecoverySeconds(
 ): number {
   switch (recovery) {
     case 'early':
-      return Math.max(3, durationSeconds - 2);
+      return Math.max(1, durationSeconds - 2);
     case 'half':
-      return Math.max(3, Math.ceil(durationSeconds / 2));
-    case 'late':
-      return Math.max(3, Math.ceil(durationSeconds * 0.45));
-    case 'last-three':
-      return 3;
+      return Math.max(1, Math.ceil(durationSeconds / 2));
+    case 'last-two':
+      return 2;
+    case 'last-one':
+      return 1;
   }
 }
 
@@ -169,29 +112,17 @@ function getBossWeights(unlockedEffects: readonly RoundEffectDefinition[]): Effe
 }
 
 function getRegularWeights(
-  streak: number,
+  difficulty: RoundDifficulty,
   unlockedEffects: readonly RoundEffectDefinition[],
   random: () => number,
 ): EffectWeight[] {
-  const band = getEffectBand(streak);
-
-  if (!band || random() >= band.probability) {
+  if (random() >= difficulty.effectProbability) {
     return [];
   }
 
   return unlockedEffects
-    .map((effect) => ({ effect, weight: band.weights[effect.id] ?? 0 }))
+    .map((effect) => ({ effect, weight: difficulty.effectWeights[effect.id] ?? 0 }))
     .filter(({ weight }) => weight > 0);
-}
-
-function getEffectBand(streak: number): EffectBand | null {
-  for (let index = EFFECT_BANDS.length - 1; index >= 0; index -= 1) {
-    if (streak >= EFFECT_BANDS[index].minimumStreak) {
-      return EFFECT_BANDS[index];
-    }
-  }
-
-  return null;
 }
 
 function pickWeightedEffect(

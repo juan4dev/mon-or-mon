@@ -1,7 +1,7 @@
 <p
   class="streak"
   [class.streak--active]="streak() > 0"
-  [class.streak--maximum]="streak() >= 50"
+  [class.streak--maximum]="streak() >= maximumDifficultyStreak"
   [class.streak--lost]="lost()"
   [style.--streak-hue]="streakHue()"
   aria-live="polite"

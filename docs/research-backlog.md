@@ -19,6 +19,8 @@ This document tracks product, API, legal, and architecture questions that should
 - Explore a thin backend as a deliberate full-stack learning step.
 - Keep accounts, global leaderboards, monetization, and a database out of the first backend iteration.
 - Extract cohesive visual responsibilities into focused Angular components as the interface grows.
+- Keep the full provider catalogs equally eligible with a 50/50 Pokémon-Digimon split.
+- Use endless sudden-death runs whose timer and visual effects reach maximum difficulty at round 30.
 - Automated tests are intentionally deferred for the current iteration.
 
 ## Research backlog
@@ -31,7 +33,7 @@ This document tracks product, API, legal, and architecture questions that should
 | R-004 | P1       | Ready  | Backend direction | Use a thin backend to learn full-stack development and improve provider isolation, response validation, caching, and stale-data fallback. | Define one round endpoint and its cache behavior before selecting a platform or framework.                                  |
 | R-005 | P1       | Open   | Creature catalog  | Should creatures be loaded from live APIs, a build-time catalog, or a backend endpoint?                                                   | Decide after R-004. Prefer a static validated catalog if live freshness is not required.                                    |
 | R-006 | P1       | Open   | API resilience    | What should happen when an API response changes or an image fails to load?                                                                | Define a limited retry and automatic creature replacement policy.                                                           |
-| R-007 | P1       | Open   | Game balance      | Should alternate forms, recolors, fusions, and very obscure creatures appear at the same frequency as base forms?                         | Define an initial curated pool and optional difficulty levels.                                                              |
+| R-007 | P1       | Done   | Game balance      | Keep the full catalogs random and scale difficulty through the timer and visual effects rather than curated creature pools.               | Revisit curated pools only if player feedback shows that provider-wide randomness feels unfair.                             |
 | R-008 | P2       | Open   | Privacy           | Will the game collect analytics, accounts, IP-derived data, or persistent identifiers?                                                    | Create a privacy checklist before adding analytics or backend persistence.                                                  |
 | R-009 | P2       | Open   | Operations        | What availability and monitoring are required for a public release?                                                                       | Define expected traffic and add lightweight API/schema monitoring only when needed.                                         |
 
@@ -47,7 +49,7 @@ These changes do not require a backend and can be implemented independently.
 | 4     | Done     | Automatically replace a creature with a broken image | High           | Small           | Try up to two replacement creatures before showing the manual recovery state.               |
 | 5     | Open     | Load each API catalog once per session               | High           | Small to medium | Reduces repeated requests and makes local de-duplication easier.                            |
 | 6     | Deferred | Preload the next creature image                      | Medium         | Small           | Wait until catalog loading is decided so preloading does not waste API requests.            |
-| 7     | Done     | Add a streak-scaled round timer                      | High           | Medium          | Start after image load, scale from 10 to 6 seconds, and treat timeout as a lost round.      |
+| 7     | Done     | Add a streak-scaled round timer                      | High           | Medium          | Start after image load, scale from 10 to 5 seconds, and treat timeout as a lost round.      |
 
 The first experience-improvement slice was completed without committing the project to a backend or a new data architecture.
 
@@ -92,6 +94,7 @@ Do not select a backend vendor until the endpoint contract and cache behavior ar
 
 | Date       | Change                                                                                                                             |
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-23 | Rebalanced endless runs to peak at round 30 through a shared timer and visual-effect difficulty curve.                             |
 | 2026-07-23 | Extracted the timer presentation and styles into `RoundTimerComponent` while keeping game timing in `App`.                         |
 | 2026-07-23 | Added the streak-scaled round timer, retro HP bar, hidden-tab pause, and timeout result flow.                                      |
 | 2026-07-23 | Completed recent-creature deduplication, Pokémon name formatting, and automatic replacement of broken images.                      |

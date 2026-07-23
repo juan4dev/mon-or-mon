@@ -3,12 +3,11 @@ export type RoundEffectId =
 
 export type RoundEffectPhase = 'active' | 'weak' | 'clear';
 
-export type RoundEffectRecovery = 'early' | 'half' | 'late' | 'last-three';
+export type RoundEffectRecovery = 'early' | 'half' | 'last-two' | 'last-one';
 
 export interface RoundEffectDefinition {
   id: RoundEffectId;
   label: string;
-  minimumStreak: number;
   prompt: string;
   recovery: RoundEffectRecovery;
 }

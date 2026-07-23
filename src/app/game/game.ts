@@ -16,6 +16,7 @@ import {
   type CreatureCardAction,
 } from './components/creature-card/creature-card';
 import { StreakDisplayComponent } from './components/streak-display/streak-display';
+import { getRoundDifficulty } from './difficulty';
 import type { Creature, CreatureUniverse } from './models/creature.model';
 import type {
   RoundEffectDefinition,
@@ -71,6 +72,10 @@ export class GameComponent {
 
     if (!effect || this.selectedUniverse() !== null || this.timedOut()) {
       return 'clear';
+    }
+
+    if (this.bossRound()) {
+      return 'active';
     }
 
     const recoverySeconds = getEffectRecoverySeconds(effect.recovery, this.roundDurationSeconds());
@@ -178,9 +183,11 @@ export class GameComponent {
 
     if (resetImageReplacementAttempts) {
       this.imageReplacementAttempts = 0;
-      const roundEffectSelection = selectRoundEffect(this.streak(), this.lastRoundEffectId);
+      const roundNumber = this.streak() + 1;
+      const roundDifficulty = getRoundDifficulty(roundNumber);
+      const roundEffectSelection = selectRoundEffect(roundNumber, this.lastRoundEffectId);
 
-      this.roundDurationSeconds.set(this.getRoundDurationSeconds());
+      this.roundDurationSeconds.set(roundDifficulty.durationSeconds);
       this.roundEffect.set(roundEffectSelection.effect);
       this.bossRound.set(roundEffectSelection.isBossRound);
       this.lastRoundEffectId = roundEffectSelection.effect?.id ?? null;
@@ -237,28 +244,6 @@ export class GameComponent {
         this.recentCreatureKeys.delete(oldestKey);
       }
     }
-  }
-
-  private getRoundDurationSeconds(): number {
-    const streak = this.streak();
-
-    if (streak >= 35) {
-      return 6;
-    }
-
-    if (streak >= 20) {
-      return 7;
-    }
-
-    if (streak >= 10) {
-      return 8;
-    }
-
-    if (streak >= 5) {
-      return 9;
-    }
-
-    return 10;
   }
 
   private startTimer(): void {

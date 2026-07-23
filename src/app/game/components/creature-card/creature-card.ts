@@ -28,6 +28,7 @@ export class CreatureCardComponent {
   readonly timedOut = input.required<boolean>();
   readonly lostStreak = input.required<number>();
   readonly seconds = input.required<number>();
+  readonly duration = input.required<number>();
   readonly percentage = input.required<number>();
 
   readonly imageLoaded = output<void>();

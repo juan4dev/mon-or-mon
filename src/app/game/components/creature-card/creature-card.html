@@ -57,7 +57,7 @@
 
   <div class="creature-card__timer-slot">
     @if (started() && imageReady()) {
-      <app-round-timer [seconds]="seconds()" [percentage]="percentage()" />
+      <app-round-timer [seconds]="seconds()" [duration]="duration()" [percentage]="percentage()" />
     }
   </div>
 </div>

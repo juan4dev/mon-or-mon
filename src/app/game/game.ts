@@ -52,7 +52,7 @@ export class GameComponent {
   protected readonly imageFailed = signal(false);
   protected readonly timedOut = signal(false);
   protected readonly hasStarted = signal(false);
-  private readonly roundDurationSeconds = signal(10);
+  protected readonly roundDurationSeconds = signal(10);
   protected readonly timeRemainingSeconds = signal(10);
   protected readonly timeRemainingPercentage = computed(
     () => (this.timeRemainingSeconds() / this.roundDurationSeconds()) * 100,

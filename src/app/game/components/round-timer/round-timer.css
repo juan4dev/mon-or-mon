@@ -58,9 +58,9 @@
   background: repeating-linear-gradient(
     90deg,
     transparent 0,
-    transparent calc(10% - 2px),
-    var(--timer-dark) calc(10% - 2px),
-    var(--timer-dark) 10%
+    transparent calc(var(--timer-segment-size) - 2px),
+    var(--timer-dark) calc(var(--timer-segment-size) - 2px),
+    var(--timer-dark) var(--timer-segment-size)
   );
   content: '';
   pointer-events: none;

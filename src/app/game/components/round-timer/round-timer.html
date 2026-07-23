@@ -2,6 +2,7 @@
   class="round-timer"
   [class.round-timer--warning]="isWarning()"
   [class.round-timer--danger]="isDanger()"
+  [style.--timer-segment-size]="segmentSize()"
   role="timer"
   [attr.aria-label]="seconds() + ' seconds remaining'"
 >

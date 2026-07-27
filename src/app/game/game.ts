@@ -34,6 +34,7 @@ type CreatureLoadState =
   | { status: 'error'; creature: null };
 
 const BEST_STREAK_STORAGE_KEY = 'mon-or-mon.best-streak';
+const APP_VERSION = '1.1.0';
 
 @Component({
   selector: 'app-game',
@@ -55,6 +56,7 @@ export class GameComponent {
   private lastRoundEffectId: RoundEffectId | null = null;
   private timerId: ReturnType<typeof setInterval> | null = null;
 
+  protected readonly appVersion = APP_VERSION;
   protected readonly selectedUniverse = signal<CreatureUniverse | null>(null);
   protected readonly streak = signal(0);
   protected readonly bestStreak = signal(this.loadBestStreak());

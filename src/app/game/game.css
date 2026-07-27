@@ -8,9 +8,9 @@
 .game-page {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
   min-height: 100dvh;
   padding: 2rem 1rem;
-  align-content: center;
 }
 
 .game {
@@ -19,6 +19,7 @@
   max-width: 28rem;
   min-width: 0;
   gap: 1.25rem;
+  align-self: center;
   justify-self: center;
   text-align: center;
 }
@@ -43,10 +44,19 @@ h1 {
   line-height: 1.4;
 }
 
+.game__version {
+  color: #3f4034;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.game__footer {
+  justify-self: center;
+}
+
 @media (max-width: 30rem) {
   .game-page {
     padding: 0.25rem 0.75rem;
-    align-content: start;
   }
 
   .game {

@@ -12,6 +12,7 @@ export class StreakDisplayComponent {
   protected readonly maximumDifficultyStreak = MAXIMUM_DIFFICULTY_ROUND;
 
   readonly streak = input.required<number>();
+  readonly bestStreak = input.required<number>();
   readonly lost = input(false);
   readonly updated = input(false);
 

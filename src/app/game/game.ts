@@ -33,6 +33,8 @@ type CreatureLoadState =
   | { status: 'ready'; creature: Creature }
   | { status: 'error'; creature: null };
 
+const BEST_STREAK_STORAGE_KEY = 'mon-or-mon.best-streak';
+
 @Component({
   selector: 'app-game',
   imports: [AsyncPipe, AnswerChoicesComponent, CreatureCardComponent, StreakDisplayComponent],
@@ -55,6 +57,7 @@ export class GameComponent {
 
   protected readonly selectedUniverse = signal<CreatureUniverse | null>(null);
   protected readonly streak = signal(0);
+  protected readonly bestStreak = signal(this.loadBestStreak());
   protected readonly lostStreak = signal(0);
   protected readonly imageReady = signal(false);
   protected readonly imageFailed = signal(false);
@@ -112,7 +115,14 @@ export class GameComponent {
     this.selectedUniverse.set(selectedUniverse);
 
     if (selectedUniverse === creature.universe) {
-      this.streak.update((streak) => streak + 1);
+      const streak = this.streak() + 1;
+
+      this.streak.set(streak);
+
+      if (streak > this.bestStreak()) {
+        this.bestStreak.set(streak);
+        this.saveBestStreak(streak);
+      }
     } else {
       this.lostStreak.set(this.streak());
       this.streak.set(0);
@@ -243,6 +253,33 @@ export class GameComponent {
       if (oldestKey) {
         this.recentCreatureKeys.delete(oldestKey);
       }
+    }
+  }
+
+  private loadBestStreak(): number {
+    try {
+      const storedValue = this.document.defaultView?.localStorage.getItem(BEST_STREAK_STORAGE_KEY);
+
+      if (storedValue === null || storedValue === undefined) {
+        return 0;
+      }
+
+      const bestStreak = Number(storedValue);
+
+      return Number.isSafeInteger(bestStreak) && bestStreak >= 0 ? bestStreak : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  private saveBestStreak(bestStreak: number): void {
+    try {
+      this.document.defaultView?.localStorage.setItem(
+        BEST_STREAK_STORAGE_KEY,
+        String(bestStreak),
+      );
+    } catch {
+      // Persistence is optional when storage is unavailable.
     }
   }
 

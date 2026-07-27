@@ -10,6 +10,7 @@
       <p class="game__question">Is it a Pokémon or a Digimon?</p>
       <app-streak-display
         [streak]="streak()"
+        [bestStreak]="bestStreak()"
         [lost]="
           timedOut() || (selectedUniverse() !== null && selectedUniverse() !== creature?.universe)
         "

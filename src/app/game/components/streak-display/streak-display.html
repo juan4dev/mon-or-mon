@@ -9,3 +9,9 @@
   <span>Streak</span>
   <strong class="streak__value" [class.streak__value--updated]="updated()">{{ streak() }}</strong>
 </p>
+
+<p class="streak__best">
+  <span class="streak__best-description">Best streak: {{ bestStreak() }}</span>
+  <span class="streak__best-label" aria-hidden="true">Best</span>
+  <strong class="streak__best-value" aria-hidden="true">{{ bestStreak() }}</strong>
+</p>
